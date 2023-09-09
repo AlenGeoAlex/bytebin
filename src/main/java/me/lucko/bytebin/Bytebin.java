@@ -180,7 +180,8 @@ public final class Bytebin implements AutoCloseable {
                 new TokenGenerator(config.getInt(Option.KEY_LENGTH, 7)),
                 (Content.MEGABYTE_LENGTH * config.getInt(Option.MAX_CONTENT_LENGTH, 10)),
                 expiryHandler,
-                config.getStringMap(Option.HTTP_HOST_ALIASES)
+                config.getStringMap(Option.HTTP_HOST_ALIASES),
+                config.getBoolean(Option.ALLOW_REVERSE_PROXY_FOR_METRICS, false)
         ));
         this.server.start();
 

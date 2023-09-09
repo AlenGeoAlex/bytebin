@@ -174,7 +174,9 @@ public class Configuration {
         UPDATE_RATE_LIMIT_PERIOD("updateRateLimitPeriodMins", "bytebin.ratelimit.update.period"), // minutes
         UPDATE_RATE_LIMIT("updateRateLimit", "bytebin.ratelimit.update.amount"),
         READ_RATE_LIMIT_PERIOD("readRateLimitPeriodMins", "bytebin.ratelimit.read.period"), // minutes
-        READ_RATE_LIMIT("readRateLimit", "bytebin.ratelimit.read.amount");
+        READ_RATE_LIMIT("readRateLimit", "bytebin.ratelimit.read.amount"),
+
+        ALLOW_REVERSE_PROXY_FOR_METRICS("allowReverseProxyForMetrics", "bytebin.metrics.reverse.proxy");
 
         final String keyJson;
         final String keySystemProperty;

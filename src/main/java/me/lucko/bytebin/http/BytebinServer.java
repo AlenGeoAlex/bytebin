@@ -64,7 +64,7 @@ public class BytebinServer extends Jooby {
             .labelNames("method", "useragent")
             .register();
 
-    public BytebinServer(ContentStorageHandler storageHandler, ContentLoader contentLoader, String host, int port, boolean metrics, RateLimitHandler rateLimitHandler, RateLimiter postRateLimiter, RateLimiter putRateLimiter, RateLimiter readRateLimiter, TokenGenerator contentTokenGenerator, long maxContentLength, ExpiryHandler expiryHandler, Map<String, String> hostAliases) {
+    public BytebinServer(ContentStorageHandler storageHandler, ContentLoader contentLoader, String host, int port, boolean metrics, RateLimitHandler rateLimitHandler, RateLimiter postRateLimiter, RateLimiter putRateLimiter, RateLimiter readRateLimiter, TokenGenerator contentTokenGenerator, long maxContentLength, ExpiryHandler expiryHandler, Map<String, String> hostAliases, boolean allowReverseProxyForMetrics) {
         ServerOptions serverOpts = new ServerOptions();
         serverOpts.setHost(host);
         serverOpts.setPort(port);
@@ -96,11 +96,10 @@ public class BytebinServer extends Jooby {
             }
         });
 
-        AssetSource wwwFiles = AssetSource.create(Bytebin.class.getClassLoader(), "/www/");
         AssetSource fourOhFour = path -> { throw new StatusCodeException(StatusCode.NOT_FOUND, "Not found"); };
 
         // serve index page or favicon, otherwise 404
-        assets("/*", new AssetHandler(wwwFiles, fourOhFour).setMaxAge(Duration.ofDays(1)));
+        assets("/*", new AssetHandler(fourOhFour).setMaxAge(Duration.ofDays(1)));
 
         // healthcheck endpoint
         get("/health", ctx -> {
@@ -110,7 +109,7 @@ public class BytebinServer extends Jooby {
 
         // metrics endpoint
         if (metrics) {
-            get("/metrics", new MetricsHandler());
+            get("/metrics", new MetricsHandler(allowReverseProxyForMetrics));
         }
 
         // define route handlers

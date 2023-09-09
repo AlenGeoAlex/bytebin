@@ -38,10 +38,16 @@ import javax.annotation.Nonnull;
 
 public final class MetricsHandler implements Route.Handler {
 
+    private final boolean allowReverseProxy;
+
+    public MetricsHandler(boolean allowReverseProxyForMetrics) {
+        this.allowReverseProxy = allowReverseProxyForMetrics;
+    }
+
     @Override
     public Context apply(@Nonnull Context ctx) throws Exception {
         // deny requests via the reverse proxy
-        if (ctx.header("X-Forwarded-For").isPresent()) {
+        if (ctx.header("X-Forwarded-For").isPresent() && !allowReverseProxy) {
             throw new StatusCodeException(StatusCode.UNAUTHORIZED);
         }
 
