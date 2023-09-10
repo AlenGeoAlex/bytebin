@@ -113,9 +113,10 @@ public final class PostHandler implements Route.Handler {
         // get the user agent & origin headers
         String userAgent = ctx.header("User-Agent").value("null");
         String origin = ctx.header("Origin").value("null");
+        String expiryHeader = ctx.header("Expiry").value("null");
         String host = ctx.getHostAndPort();
 
-        Date expiry = this.expiryHandler.getExpiry(userAgent, origin, host);
+        Date expiry = this.expiryHandler.getExpiry(userAgent, origin, host, expiryHeader);
 
         // check max content length
         if (content.length > this.maxContentLength) {
@@ -138,6 +139,7 @@ public final class PostHandler implements Route.Handler {
                 "    ip = " + ipAddress + "\n" +
                 (origin.equals("null") ? "" : "    origin = " + origin + "\n") +
                 "    content size = " + String.format("%,d", content.length / 1024) + " KB\n" +
+                "    expiry = "+ (expiry != null ? expiry.toString() : " ") +" \n" +
                 "    encoding = " + encodings.toString() + "\n"
         );
 

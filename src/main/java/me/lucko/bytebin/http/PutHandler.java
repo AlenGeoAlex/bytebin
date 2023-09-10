@@ -134,8 +134,10 @@ public final class PutHandler implements Route.Handler {
             String userAgent = ctx.header("User-Agent").value("null");
             String origin = ctx.header("Origin").value("null");
             String host = ctx.getHostAndPort();
+            String expiryHeader = ctx.header("Expiry").value("null");
 
-            Date newExpiry = this.expiryHandler.getExpiry(userAgent, origin, host);
+
+            Date newExpiry = this.expiryHandler.getExpiry(userAgent, origin, host, expiryHeader);
 
             LOGGER.info("[PUT]\n" +
                     "    key = " + path + "\n" +
@@ -143,6 +145,7 @@ public final class PutHandler implements Route.Handler {
                     "    new encoding = " + newEncodings.toString() + "\n" +
                     "    user agent = " + userAgent + "\n" +
                     "    ip = " + ipAddress + "\n" +
+                    "    expiry = "+ (newExpiry != null ? newExpiry.toString() : " ") +" \n" +
                     (origin.equals("null") ? "" : "    origin = " + origin + "\n") +
                     "    old content size = " + String.format("%,d", oldContent.getContent().length / 1024) + " KB" + "\n" +
                     "    new content size = " + String.format("%,d", newContent.get().length / 1024) + " KB" + "\n"

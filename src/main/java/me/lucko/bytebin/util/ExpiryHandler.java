@@ -84,6 +84,30 @@ public final class ExpiryHandler {
         return new Date(Instant.now().plus(duration).toEpochMilli());
     }
 
+    public Date getExpiry(String userAgent, String origin, String host, String header) {
+        if(header == null || header.isEmpty() || header.equals("null")) {
+            Duration duration = this.specificLifetimes.getOrDefault(userAgent,
+                    this.specificLifetimes.getOrDefault(origin,
+                            this.specificLifetimes.getOrDefault(host,
+                                    this.defaultLifetime
+                            )
+                    )
+            );
+            if (duration.isZero()) {
+                return null;
+            }
+
+            return new Date(Instant.now().plus(duration).toEpochMilli());
+        }else{
+            long value = 43200; //30 Days
+            try {
+                value = Long.parseLong(header);
+            }catch (Exception ignored){}
+
+            return new Date(Instant.now().plus(toDuration(value)).toEpochMilli());
+        }
+    }
+
     private static Duration toDuration(long minutes) {
         // Duration.ZERO is used as a special case to mean "don't expire"
         // it is assumed that a negative number of minutes implies the same.
